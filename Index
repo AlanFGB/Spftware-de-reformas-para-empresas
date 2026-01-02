@@ -1,1 +1,214 @@
+import React, { useState } from 'react';
+import { 
+  Leaf, 
+  Home, 
+  HardHat, 
+  Calculator, 
+  Droplets, 
+  Sun, 
+  Settings, 
+  Camera, 
+  FileCheck,
+  ChevronRight,
+  ArrowLeft,
+  Trash2,
+  HeartPulse
+} from 'lucide-react';
 
+// --- Componentes de Interface ---
+
+const Card = ({ children, onClick, className = "" }) => (
+  <div 
+    onClick={onClick}
+    className={`bg-white p-4 rounded-2xl shadow-sm border border-slate-100 active:scale-95 transition-transform cursor-pointer ${className}`}
+  >
+    {children}
+  </div>
+);
+
+const Button = ({ children, onClick, variant = "primary" }) => {
+  const styles = variant === "primary" 
+    ? "bg-green-600 text-white" 
+    : "bg-slate-100 text-slate-700";
+  return (
+    <button 
+      onClick={onClick}
+      className={`w-full py-3 px-4 rounded-xl font-semibold transition-colors ${styles}`}
+    >
+      {children}
+    </button>
+  );
+};
+
+// --- Ecrãs Principais ---
+
+const Dashboard = ({ setPage }) => (
+  <div className="space-y-6">
+    <header className="flex justify-between items-center">
+      <div>
+        <h1 className="text-2xl font-bold text-slate-800">Reforma Pro</h1>
+        <p className="text-slate-500">Gestão Sustentável</p>
+      </div>
+      <div className="bg-green-100 p-2 rounded-full">
+        <Leaf className="text-green-600" size={24} />
+      </div>
+    </header>
+
+    <section className="grid grid-cols-2 gap-4">
+      <Card onClick={() => setPage('roof')} className="flex flex-col items-center justify-center space-y-2 py-8">
+        <Home className="text-blue-500" size={32} />
+        <span className="font-medium">Telhados</span>
+      </Card>
+      <Card onClick={() => setPage('floors')} className="flex flex-col items-center justify-center space-y-2 py-8">
+        <Calculator className="text-orange-500" size={32} />
+        <span className="font-medium">Pisos</span>
+      </Card>
+      <Card onClick={() => setPage('eco')} className="flex flex-col items-center justify-center space-y-2 py-8 border-green-200 bg-green-50">
+        <Leaf className="text-green-600" size={32} />
+        <span className="font-medium">Eco-Gestão</span>
+      </Card>
+      <Card onClick={() => setPage('wellness')} className="flex flex-col items-center justify-center space-y-2 py-8">
+        <HeartPulse className="text-red-500" size={32} />
+        <span className="font-medium">Bem-Estar</span>
+      </Card>
+    </section>
+
+    <section className="space-y-3">
+      <h2 className="text-lg font-semibold text-slate-700">Obras Recentes</h2>
+      {[1, 2].map(i => (
+        <Card key={i} className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-slate-200 rounded-lg overflow-hidden flex items-center justify-center">
+              <Camera size={20} className="text-slate-400" />
+            </div>
+            <div>
+              <p className="font-semibold text-slate-800">Residência Vale Verde</p>
+              <p className="text-xs text-slate-500">Etapa: Cobertura • 75% concluído</p>
+            </div>
+          </div>
+          <ChevronRight size={20} className="text-slate-300" />
+        </Card>
+      ))}
+    </section>
+  </div>
+);
+
+const RoofCalculator = ({ onBack }) => {
+  const [area, setArea] = useState('');
+  const [type, setType] = useState('eco'); // eco = telhado verde
+
+  const calculate = () => {
+    const totalArea = parseFloat(area) || 0;
+    const plants = totalArea * 12; // Média de mudas por m2
+    const substrate = totalArea * 0.1; // m3 de substrato (10cm)
+    return { plants, substrate };
+  };
+
+  const results = calculate();
+
+  return (
+    <div className="space-y-6">
+      <button onClick={onBack} className="flex items-center text-slate-500 mb-4">
+        <ArrowLeft size={20} className="mr-1" /> Voltar
+      </button>
+      <h2 className="text-xl font-bold">Calculadora de Telhado Verde</h2>
+      
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Área Total (m²)</label>
+          <input 
+            type="number" 
+            value={area}
+            onChange={(e) => setArea(e.target.value)}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+            placeholder="Ex: 50"
+          />
+        </div>
+
+        {area > 0 && (
+          <Card className="bg-green-50 border-green-100">
+            <h3 className="font-bold text-green-800 mb-2">Estimativa de Materiais Eco:</h3>
+            <ul className="text-sm space-y-1 text-green-700">
+              <li>• Mudas de Sedum: <strong>{results.plants} un</strong></li>
+              <li>• Substrato Leve: <strong>{results.substrate.toFixed(2)} m³</strong></li>
+              <li>• Membrana de Retenção: <strong>{area} m²</strong></li>
+            </ul>
+          </Card>
+        )}
+      </div>
+      <Button>Gerar Orçamento PDF</Button>
+    </div>
+  );
+};
+
+const WellnessModule = ({ onBack }) => (
+  <div className="space-y-6">
+    <button onClick={onBack} className="flex items-center text-slate-500 mb-4">
+      <ArrowLeft size={20} className="mr-1" /> Voltar
+    </button>
+    <h2 className="text-xl font-bold">Wellness & Saúde Pós-Obra</h2>
+    <p className="text-sm text-slate-600 italic">Sugestões para purificação do ambiente e saúde da equipa.</p>
+
+    <div className="space-y-4">
+      <Card className="flex items-start space-x-3">
+        <div className="p-2 bg-green-100 rounded-lg"><Leaf className="text-green-600" size={20} /></div>
+        <div>
+          <h4 className="font-bold">Mundo Verde / Raiz Nativa</h4>
+          <p className="text-xs text-slate-500">Sugestão: Óleos essenciais de Eucalipto para purificar o ar após pintura.</p>
+        </div>
+      </Card>
+      
+      <Card className="flex items-start space-x-3">
+        <div className="p-2 bg-blue-100 rounded-lg"><HeartPulse className="text-blue-600" size={20} /></div>
+        <div>
+          <h4 className="font-bold">Drogal / Drogasil</h4>
+          <p className="text-xs text-slate-500">Essencial: Reposição de Kit de Primeiros Socorros NR-18 para a equipa.</p>
+        </div>
+      </Card>
+    </div>
+  </div>
+);
+
+// --- Componente Principal App ---
+
+export default function App() {
+  const [page, setPage] = useState('home');
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex justify-center py-0 sm:py-8">
+      {/* Mockup de Telemóvel */}
+      <div className="w-full max-w-[400px] bg-white h-[100vh] sm:h-[800px] sm:rounded-[3rem] shadow-2xl overflow-hidden border-[8px] border-slate-900 relative">
+        
+        {/* Barra de Status */}
+        <div className="h-6 bg-white w-full flex justify-center items-end">
+          <div className="w-32 h-4 bg-slate-900 rounded-b-xl"></div>
+        </div>
+
+        {/* Conteúdo Dinâmico */}
+        <main className="p-6 overflow-y-auto h-[calc(100%-120px)]">
+          {page === 'home' && <Dashboard setPage={setPage} />}
+          {page === 'roof' && <RoofCalculator onBack={() => setPage('home')} />}
+          {page === 'wellness' && <WellnessModule onBack={() => setPage('home')} />}
+          {(page === 'eco' || page === 'floors') && (
+            <div className="text-center py-20">
+              <Calculator size={48} className="mx-auto text-slate-300 mb-4" />
+              <p className="text-slate-500">Módulo em desenvolvimento para o GitHub...</p>
+              <button onClick={() => setPage('home')} className="mt-4 text-green-600 font-bold">Voltar</button>
+            </div>
+          )}
+        </main>
+
+        {/* Tab Bar Inferior */}
+        <nav className="absolute bottom-0 w-full h-16 bg-white border-t flex justify-around items-center px-4">
+          <Home onClick={() => setPage('home')} size={24} className={page === 'home' ? "text-green-600" : "text-slate-400"} />
+          <FileCheck size={24} className="text-slate-400" />
+          <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center -mt-8 shadow-lg shadow-green-200">
+            <Camera className="text-white" size={24} />
+          </div>
+          <Droplets size={24} className="text-slate-400" />
+          <Settings size={24} className="text-slate-400" />
+        </nav>
+      </div>
+    </div>
+  );
+}
